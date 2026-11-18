@@ -30,59 +30,59 @@ body{
   font-family:var(--font-main);
   color:var(--text); background:var(--bg);
   background-image:radial-gradient(ellipse at 50% 42%,var(--felt1) 0%,var(--felt2) 58%,var(--bg) 100%);
-  display:grid; grid-template-rows:auto 1fr auto auto; overflow:hidden; user-select:none;
+  display:grid; grid-template-rows:auto 1fr auto auto; overflow:hidden; -webkit-user-select:none; user-select:none;
   font-variant-numeric:tabular-nums;
 }
 body.break{--felt1:var(--brk1);--felt2:var(--brk2)}
 
 /* Верхняя полоса */
-.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2vw;padding:1.6vh 2.5vw;
+.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;grid-gap:2vw;gap:2vw;padding:1.6vh 2.5vw;
   border-bottom:1px solid var(--line);background:var(--panel)}
 .top .cell{display:flex;flex-direction:column;gap:.2vh}
 .top .cell.right{align-items:flex-end;text-align:right}
-.lbl{font-size:min(1.5vw,2vh);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.val{font-family:var(--font-num);font-size:min(3.4vw,4.6vh);font-weight:600;line-height:1.05}
-.title{font-family:var(--font-title);font-size:min(2.6vw,3.6vh);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-align:center}
+.lbl{font-size:2vh;font-size:min(1.5vw,2vh);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.val{font-family:var(--font-num);font-size:4.6vh;font-size:min(3.4vw,4.6vh);font-weight:600;line-height:1.05}
+.title{font-family:var(--font-title);font-size:3.6vh;font-size:min(2.6vw,3.6vh);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-align:center}
 .title small{display:block;font-size:.5em;letter-spacing:.3em;color:var(--gold-dim);font-weight:500}
 #rebuyVal.closed{color:var(--red)}
 #rebuyVal.soon{color:var(--gold)}
 
 /* Центр */
 .main{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8vh;min-height:0;padding:1vh 2vw;position:relative}
-#levelLabel{font-size:min(3vw,4.2vh);letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:600}
-#countdown{font-family:var(--font-num);font-size:min(25vw,31vh);font-weight:700;line-height:.95;letter-spacing:-.01em;text-shadow:0 .6vh 3vh rgba(0,0,0,.45)}
-#countdown.long{font-size:min(17vw,26vh)}
+#levelLabel{font-size:4.2vh;font-size:min(3vw,4.2vh);letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:600}
+#countdown{font-family:var(--font-num);font-size:31vh;font-size:min(25vw,31vh);font-weight:700;line-height:.95;letter-spacing:-.01em;text-shadow:0 .6vh 3vh rgba(0,0,0,.45)}
+#countdown.long{font-size:26vh;font-size:min(17vw,26vh)}
 #countdown.warn{color:var(--red)}
 body.paused #countdown{animation:blink 1.6s ease-in-out infinite}
 @keyframes blink{50%{opacity:.35}}
-#pauseTag{position:absolute;top:1vh;right:2.5vw;font-size:min(2vw,2.8vh);letter-spacing:.3em;color:var(--red);
+#pauseTag{position:absolute;top:1vh;right:2.5vw;font-size:2.8vh;font-size:min(2vw,2.8vh);letter-spacing:.3em;color:var(--red);
   border:2px solid var(--red);border-radius:.6vh;padding:.3vh 1vw;display:none;font-weight:700}
 body.paused #pauseTag{display:block}
-#blinds{font-family:var(--font-num);font-size:min(10vw,12.5vh);font-weight:700;line-height:1.05;color:var(--text)}
-#ante{font-size:min(3.2vw,4.4vh);color:var(--gold);font-weight:600;min-height:1.2em}
-.progress{width:min(70vw,1200px);height:.9vh;background:rgba(0,0,0,.4);border-radius:1vh;overflow:hidden;margin:.6vh 0}
+#blinds{font-family:var(--font-num);font-size:12.5vh;font-size:min(10vw,12.5vh);font-weight:700;line-height:1.05;color:var(--text)}
+#ante{font-size:4.4vh;font-size:min(3.2vw,4.4vh);color:var(--gold);font-weight:600;min-height:1.2em}
+.progress{width:70vw;max-width:1200px;width:min(70vw,1200px);height:.9vh;background:rgba(0,0,0,.4);border-radius:1vh;overflow:hidden;margin:.6vh 0}
 .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:1vh}
-.next{display:flex;align-items:baseline;gap:1.4vw;font-size:min(3.4vw,4.6vh);color:var(--muted)}
+.next{display:flex;align-items:baseline;gap:1.4vw;font-size:4.6vh;font-size:min(3.4vw,4.6vh);color:var(--muted)}
 .next b{color:var(--text);font-weight:600}
 .next .lbl{font-size:.5em}
-#flash{white-space:pre-line;position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
-  background:var(--flash);font-size:min(9vw,13vh);font-weight:800;color:var(--gold);letter-spacing:.06em;z-index:5;padding:4vw}
+#flash{white-space:pre-line;position:absolute;top:0;right:0;bottom:0;left:0;display:none;align-items:center;justify-content:center;text-align:center;
+  background:var(--flash);font-size:13vh;font-size:min(9vw,13vh);font-weight:800;color:var(--gold);letter-spacing:.06em;z-index:5;padding:4vw}
 #flash.on{display:flex;animation:pop .35s ease-out}
 @keyframes pop{from{transform:scale(.92);opacity:0}}
 
 /* Статистика */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1vw;padding:1vh 2.5vw}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);grid-gap:1vw;gap:1vw;padding:1vh 2.5vw}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:1.2vh;padding:1vh 1.2vw;display:flex;flex-direction:column;align-items:center;gap:.2vh;position:relative}
-.tile .val{font-size:min(3.6vw,4.8vh)}
+.tile .val{font-size:4.8vh;font-size:min(3.6vw,4.8vh)}
 .tile .val small{font-size:.6em;color:var(--muted);font-weight:500}
 .pm{position:absolute;top:50%;transform:translateY(-50%);display:flex;gap:.4vw}
 .pm.l{left:.8vw}.pm.r{right:.8vw}
-.pm button{width:min(3.2vw,4.4vh);height:min(3.2vw,4.4vh);padding:0;font-size:min(2vw,2.8vh);border-radius:50%}
+.pm button{width:4.4vh;width:min(3.2vw,4.4vh);height:4.4vh;height:min(3.2vw,4.4vh);padding:0;font-size:2.8vh;font-size:min(2vw,2.8vh);border-radius:50%}
 
 /* Кнопки */
 .controls{display:flex;justify-content:center;gap:1vw;padding:1vh 2.5vw 1.6vh;flex-wrap:wrap}
 button{font:inherit;color:var(--text);background:var(--btn);border:1px solid var(--line);border-radius:.9vh;
-  padding:.9vh 1.6vw;font-size:min(1.6vw,2.2vh);cursor:pointer;transition:background .15s}
+  padding:.9vh 1.6vw;font-size:2.2vh;font-size:min(1.6vw,2.2vh);cursor:pointer;transition:background .15s}
 button:hover{background:var(--btn-hover)}
 button:disabled{opacity:.35;cursor:default}
 button.primary{background:var(--gold);color:var(--on-gold);border-color:var(--gold);font-weight:700;min-width:12vw}
@@ -91,7 +91,7 @@ button.danger{border-color:var(--red);color:var(--red)}
 kbd{font:inherit;font-size:.8em;opacity:.6;margin-left:.5em}
 
 /* Настройки */
-dialog{width:min(900px,94vw);max-height:92vh;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--dlg);color:var(--text);user-select:text}
+dialog{width:94vw;max-width:900px;width:min(900px,94vw);max-height:92vh;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--dlg);color:var(--text);user-select:text}
 dialog::backdrop{background:rgba(0,0,0,.65)}
 dialog form{display:flex;flex-direction:column;max-height:92vh}
 dialog header,dialog footer{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--dlg-bar)}
@@ -104,7 +104,7 @@ html[dir=rtl] kbd{margin-left:0;margin-right:.5em}
 dialog h3{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:18px 0 8px;border-bottom:1px solid var(--line);padding-bottom:5px}
 dialog button{font-size:14px;padding:7px 12px;border-radius:7px}
 dialog button.primary{min-width:0}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));grid-gap:10px 16px;gap:10px 16px}
 .grid label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
 .chk{flex-direction:row!important;align-items:center;gap:8px!important;color:var(--text)!important;font-size:14px!important}
 input[type=number],input[type=text],select{font:inherit;font-size:15px;color:var(--text);background:var(--inp);border:1px solid var(--inp-line);border-radius:6px;padding:6px 8px;width:100%}
@@ -126,8 +126,45 @@ body.target-on .notTarget{display:none}
 body.nobank #prizeTile{display:none}
 body.nobank .stats{grid-template-columns:repeat(3,1fr)}
 
+
+/* ---- Запасные варианты для старых браузеров (телевизоры) ---- */
+/* нет CSS Grid (Chrome < 57): та же раскладка на flex */
+@supports not (display:grid){
+  body{display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .top .cell{flex:1 1 0;min-width:0}
+  .top .title{flex:0 0 auto;margin:0 2vw}
+  .main{flex:1 1 auto}
+  .stats{display:flex;padding-left:2vw;padding-right:2vw}
+  .stats .tile{flex:1 1 0;margin:0 .5vw}
+  .grid{display:flex;flex-wrap:wrap}
+  .grid>label{flex:1 1 190px;margin:5px 8px;min-width:190px}
+  @media (max-width:760px){
+    .stats{flex-wrap:wrap}
+    .stats .tile{flex:1 1 40%;margin:3px}
+    .grid>label{flex-basis:100%}
+  }
+}
+/* нет gap у flex (Chrome < 84): отступы через margin; класс nogap ставит скрипт в начале страницы */
+html.nogap .top .cell>*+*{margin-top:.2vh}
+html.nogap .main>*+*{margin-top:.8vh}
+html.nogap #pauseTag,html.nogap #flash{margin:0}
+html.nogap .next>*+*{margin-left:1.4vw}
+html.nogap[dir=rtl] .next>*+*{margin-left:0;margin-right:1.4vw}
+html.nogap .tile .val{margin-top:.2vh}
+html.nogap .controls>*{margin:.5vw}
+html.nogap dialog header>*+*,html.nogap dialog footer>*+*{margin-left:10px}
+html.nogap .hdr-r>*+*{margin-left:8px}
+html.nogap .fbtns>*+*{margin-left:8px}
+html.nogap .grid label>*+*{margin-top:4px}
+html.nogap .grid .chk>*+*{margin-top:0}
+html.nogap .chk input{margin-right:8px}
+html.nogap[dir=rtl] .chk input{margin-right:0;margin-left:8px}
+html.nogap .row>*{margin:0 8px 8px 0}
+html.nogap[dir=rtl] .row>*{margin:0 0 8px 8px}
+
 @media (max-width:760px){
-  .stats{grid-template-columns:repeat(2,1fr);gap:6px}
+  .stats{grid-template-columns:repeat(2,1fr);grid-gap:6px;gap:6px}
   .lbl{font-size:10px}.top .val{font-size:18px}.title{font-size:14px}
   .tile .val{font-size:20px}
   .pm button{width:26px;height:26px;font-size:15px}
@@ -153,6 +190,108 @@ body.nobank .stats{grid-template-columns:repeat(3,1fr)}
 </style>
 </head>
 <body>
+<script>
+/* Совместимость со старыми браузерами (телевизоры): полифилы, ловушка ошибок, определение flex-gap, экран ?debug=1.
+   Только синтаксис ES5, чтобы блок работал даже там, где основной скрипт не запускается. */
+(function(){
+  if (!String.prototype.padStart) {
+    String.prototype.padStart = function(n, ch){
+      var str = String(this); ch = (ch === undefined) ? ' ' : String(ch); n = n >> 0;
+      if (str.length >= n || !ch) return str;
+      var pad = ''; while (pad.length < n - str.length) pad += ch;
+      return pad.slice(0, n - str.length) + str;
+    };
+  }
+  if (!String.prototype.padEnd) {
+    String.prototype.padEnd = function(n, ch){
+      var str = String(this); ch = (ch === undefined) ? ' ' : String(ch); n = n >> 0;
+      if (str.length >= n || !ch) return str;
+      var pad = ''; while (pad.length < n - str.length) pad += ch;
+      return str + pad.slice(0, n - str.length);
+    };
+  }
+
+  var errs = window.__errs = [];
+  var bar = null;
+  function showBar(){
+    try {
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.style.cssText = 'pointer-events:none;position:fixed;left:0;bottom:0;z-index:99998;max-width:100%;background:#a00;color:#fff;font:12px/1.3 monospace;padding:3px 8px;opacity:.9';
+        document.body.appendChild(bar);
+      }
+      bar.textContent = 'Ошибка: ' + errs[errs.length - 1];
+    } catch (e) {}
+  }
+  window.__reportError = function(e){
+    errs.push(String((e && e.message) || e));
+    showBar();
+  };
+  window.onerror = function(msg, src, line, col){
+    errs.push(msg + ' (' + (line || 0) + ':' + (col || 0) + ')');
+    showBar();
+  };
+
+  function hasFlexGap(){
+    try {
+      var d = document.createElement('div');
+      d.style.cssText = 'display:flex;flex-direction:column;gap:1px;position:absolute;left:-999px;top:0';
+      var a = document.createElement('div'), b = document.createElement('div');
+      a.style.height = '1px'; b.style.height = '1px';
+      d.appendChild(a); d.appendChild(b);
+      document.body.appendChild(d);
+      var ok = d.offsetHeight === 3;
+      document.body.removeChild(d);
+      return ok;
+    } catch (e) { return true; }
+  }
+  function supports(prop, val){
+    try { return !!(window.CSS && CSS.supports && CSS.supports(prop, val)); } catch (e) { return false; }
+  }
+
+  function init(){
+    if (!hasFlexGap()) document.documentElement.className += ' nogap';
+    if (location.search.indexOf('debug=1') < 0) return;
+
+    var o = document.createElement('div');
+    o.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;z-index:99999;background:#000;color:#fff;font:bold 26px/1.35 monospace;padding:20px;overflow:auto;white-space:pre-wrap;word-break:break-all';
+    var btn = document.createElement('button');
+    btn.textContent = 'Закрыть';
+    btn.style.cssText = 'font:bold 26px sans-serif;padding:8px 24px;margin-bottom:14px;cursor:pointer';
+    var pre = document.createElement('div');
+    btn.onclick = function(){ clearInterval(timer); o.parentNode.removeChild(o); };
+    o.appendChild(btn); o.appendChild(pre);
+    document.body.appendChild(o);
+
+    var m = /Chrom(?:e|ium)\/(\d+)/.exec(navigator.userAgent);
+    var flexGap = hasFlexGap();
+    function yn(v){ return v ? 'ДА' : 'НЕТ'; }
+    function fill(){
+      var t = 'POKER NIGHT — ДИАГНОСТИКА (?debug=1)\n\n';
+      t += 'Браузер: ' + navigator.userAgent + '\n';
+      t += 'Chromium: ' + (m ? m[1] : 'не определён') + '\n';
+      t += 'Окно: ' + window.innerWidth + ' x ' + window.innerHeight + ', масштаб ' + window.devicePixelRatio + ', экран ' + screen.width + ' x ' + screen.height + '\n\n';
+      t += 'CSS grid: ' + yn(supports('display', 'grid')) + '\n';
+      t += 'CSS min(): ' + yn(supports('font-size', 'min(1vw,1vh)')) + '\n';
+      t += 'CSS inset: ' + yn(supports('inset', '0')) + '\n';
+      t += 'CSS переменные: ' + yn(supports('--x', '0')) + '\n';
+      t += 'gap у flex: ' + yn(flexGap) + '\n';
+      t += 'padStart: ' + yn(typeof String.prototype.padStart === 'function') + '\n';
+      t += 'Полный экран: ' + yn(!!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen)) + '\n';
+      t += 'dialog.showModal: ' + yn(typeof HTMLDialogElement !== 'undefined' && !!HTMLDialogElement.prototype.showModal) + '\n';
+      var ls = 'НЕТ'; try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); ls = 'ДА'; } catch (e) {}
+      t += 'localStorage: ' + ls + '\n';
+      t += 'Скрипт таймера запущен: ' + yn(!!window.__timerStarted) + '\n\n';
+      t += 'Ошибки (' + errs.length + '):\n' + (errs.length ? errs.join('\n') : '— нет');
+      pre.textContent = t;
+    }
+    fill();
+    var timer = setInterval(fill, 1000);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
 
 <div class="top">
   <div class="cell"><span class="lbl">Время игры</span><span class="val" id="gameTime">0:00:00</span></div>
@@ -252,7 +391,7 @@ body.nobank .stats{grid-template-columns:repeat(3,1fr)}
     </div>
     <footer>
       <button type="button" id="resetBtn" class="danger">Новая игра (сброс таймера)</button>
-      <span style="display:flex;gap:8px"><button type="button" id="dlgCancel">Отмена</button><button type="button" id="dlgSave" class="primary">Сохранить</button></span>
+      <span class="fbtns" style="display:flex;gap:8px"><button type="button" id="dlgCancel">Отмена</button><button type="button" id="dlgSave" class="primary">Сохранить</button></span>
     </footer>
   </form>
 </dialog>
@@ -570,8 +709,17 @@ function gotoLevel(i){
   save(); render();
 }
 function fullscreen(){
-  if (document.fullscreenElement) document.exitFullscreen();
-  else document.documentElement.requestFullscreen().catch(()=>{});
+  // у старых браузеров (ТВ) только webkit-вариант; ошибки не показываем
+  const d = document, de = d.documentElement;
+  try{
+    if (d.fullscreenElement || d.webkitFullscreenElement){
+      const ex = d.exitFullscreen || d.webkitExitFullscreen;
+      if (ex) ex.call(d);
+    } else {
+      const rq = de.requestFullscreen || de.webkitRequestFullscreen;
+      if (rq){ const r = rq.call(de); if (r && r.catch) r.catch(()=>{}); }
+    }
+  }catch(e){}
 }
 function newGame(){
   S = defState(C.players);
@@ -807,8 +955,9 @@ $('resetBtn').onclick = () => {
 };
 
 if (S.running) wakeLock(true);
-applyLang();
-setInterval(tick, 200);
+try{ applyLang(); }catch(e){ if (window.__reportError) window.__reportError(e); }
+window.__timerStarted = true;
+setInterval(() => { try{ tick(); }catch(e){ if (window.__reportError) window.__reportError(e); } }, 200);
 </script>
 </body>
 </html>
