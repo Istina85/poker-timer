@@ -342,11 +342,12 @@ html.nogap[dir=rtl] .row>*{margin:0 0 8px 8px}
         <label>Название турнира<input type="text" id="cTitle" maxlength="40"></label>
         <label>Знак валюты<input type="text" id="cCur" maxlength="4"></label>
         <label>Тема оформления<select id="cTheme"></select></label>
+        <label>Звук смены уровня<select id="cLevelSound"></select></label>
         <label class="chk"><input type="checkbox" id="cSound"> Звуковые сигналы</label>
         <label class="chk"><input type="checkbox" id="cAnte"> Играем с анте</label>
         <label class="chk"><input type="checkbox" id="cShowBank"> Выводить банк</label>
       </div>
-      <div class="row"><button type="button" id="testSound">Проверить звук</button></div>
+      <div class="row"><button type="button" id="testSound">Прослушать</button></div>
 
       <h3>Ребаи</h3>
       <div class="grid">
@@ -458,7 +459,7 @@ const L = {
     'Новая игра (сброс таймера)':'New game (reset timer)','Отмена':'Cancel','Сохранить':'Save','Язык':'Language','Выше':'Up','Ниже':'Down',
     'Удалить':'Delete','Блайнды':'Blinds','Ребаи закрыты':'Rebuys closed','мин':'min','ч':'h',
     'Начать новую игру? Таймер, уровень, выбывшие игроки и ребаи будут сброшены. Настройки сохранятся.':'Start a new game? The timer, level, players out and rebuys will be reset. Settings will be kept.',
-    '×1,25':'×1.25','×1,5':'×1.5','Неон-ночь':'Neon night','Изумруд и медь':'Emerald and copper','Светлый минимализм':'Light minimalism','Чёрная':'Black',
+    '×1,25':'×1.25','×1,5':'×1.5','Звук смены уровня':'Level change sound','Прослушать':'Listen','Классика':'Classic','Колокольчик':'Bell','Гонг':'Gong','Фишки':'Chips','Касса':'Cash register','Мягкий сигнал':'Soft chime','Тройной бип':'Triple beep','Фанфары':'Fanfare','Арфа':'Harp','Сирена':'Siren','Неон-ночь':'Neon night','Изумруд и медь':'Emerald and copper','Светлый минимализм':'Light minimalism','Чёрная':'Black',
     'Королевский пурпур':'Royal purple','Океан':'Ocean','Бордо и закат':'Bordeaux and sunset','Песок':'Sand','Мята':'Mint','Сталь и янтарь':'Steel and amber'
   },
   he: {
@@ -481,7 +482,7 @@ const L = {
     'Новая игра (сброс таймера)':'משחק חדש (איפוס טיימר)','Отмена':'ביטול','Сохранить':'שמור','Язык':'שפה','Выше':'למעלה','Ниже':'למטה',
     'Удалить':'מחק','Блайнды':'בליינדים','Ребаи закрыты':'הריבאיים נסגרו','мин':'דק׳','ч':'ש׳',
     'Начать новую игру? Таймер, уровень, выбывшие игроки и ребаи будут сброшены. Настройки сохранятся.':'להתחיל משחק חדש? הטיימר, השלב, השחקנים שיצאו והריבאיים יאופסו. ההגדרות יישמרו.',
-    'Неон-ночь':'לילה ניאון','Изумруд и медь':'אזמרגד ונחושת','Светлый минимализм':'מינימליזם בהיר','Чёрная':'שחור',
+    'Звук смены уровня':'צליל החלפת שלב','Прослушать':'האזן','Классика':'קלאסי','Колокольчик':'פעמון','Гонг':'גונג','Фишки':'צ׳יפים','Касса':'קופה רושמת','Мягкий сигнал':'צליל רך','Тройной бип':'שלוש צפירות','Фанфары':'תרועה','Арфа':'נבל','Сирена':'סירנה','Неон-ночь':'לילה ניאון','Изумруд и медь':'אזמרגד ונחושת','Светлый минимализм':'מינימליזם בהיר','Чёрная':'שחור',
     'Королевский пурпур':'סגול מלכותי','Океан':'אוקיינוס','Бордо и закат':'בורדו ושקיעה','Песок':'חול','Мята':'נענע','Сталь и янтарь':'פלדה וענבר'
   }
 };
@@ -509,6 +510,9 @@ function applyLang(){
   const sel = $('cTheme'), cur = sel.value || C.theme;
   sel.innerHTML = THEMES.map(t => '<option value="'+t.id+'">'+T(t.name)+'</option>').join('');
   sel.value = cur;
+  const ls = $('cLevelSound'), lv = ls.value || String(C.levelSound || 0);
+  ls.innerHTML = SOUNDS.map((x, i) => '<option value="'+i+'">'+T(x.name)+'</option>').join('');
+  ls.value = lv;
   $('cLang').value = LANG;
   if (W.length){ readRows(); drawRows(); }
   render();
@@ -553,7 +557,7 @@ function buildLevels(c){
 }
 const defConfig = () => {
   const c = {
-    title:'Poker Night', currency:'₽', sound:true, anteOn:false, showBank:true, theme:'neon', lang:'ru',
+    title:'Poker Night', currency:'₽', sound:true, anteOn:false, showBank:true, theme:'neon', lang:'ru', levelSound:0,
     rebuyOn:true, rebuyMin:60, rebuyStack:10000, rebuyCost:1000,
     players:9, startStack:10000, buyIn:1000,
     minChip:25, startSb:100, startBb:100, levelMin:15,
@@ -622,10 +626,60 @@ function beep(freq, start, dur, vol, type){
   o.connect(g); g.connect(a.destination);
   o.start(t); o.stop(t+dur+0.05);
 }
+// щелчок фишки: короткий шум через фильтр верхних частот
+function noiseHit(start, dur, vol, hp){
+  const a = audio(); if (!a) return;
+  const len = Math.max(1, Math.floor(a.sampleRate*dur)), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random()*2 - 1;
+  const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(), t = a.currentTime + start;
+  src.buffer = buf; f.type = 'highpass'; f.frequency.value = hp;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  src.connect(f); f.connect(g); g.connect(a.destination); src.start(t);
+}
+/* 10 звуков смены уровня (синтез Web Audio, без файлов). Нота: [начало, длительность, тип, [[частота, громкость], ...]];
+   тип 'noise' — щелчок: [[частота фильтра, громкость]]. Перерыв: те же ноты, тоны в обратном порядке (вниз), если нет своего brk. */
+const SOUNDS = [
+  {name:'Классика',
+   seq:[[0,.35,'sine',[[660,.35]]],[.3,.35,'sine',[[880,.35]]],[.6,.9,'sine',[[1320,.35]]]],
+   brk:[[0,.4,'sine',[[880,.35]]],[.35,.4,'sine',[[660,.35]]],[.7,1,'sine',[[523,.35]]]]},
+  {name:'Колокольчик',
+   seq:[[0,1.4,'sine',[[1568,.2],[2349,.1],[3136,.07]]],[.5,1.4,'sine',[[1319,.2],[1976,.1],[2637,.07]]]]},
+  {name:'Гонг',
+   seq:[[0,2.2,'sine',[[196,.17],[392,.1],[588,.05],[1176,.03]]],[1,2,'sine',[[147,.17],[294,.1],[441,.05],[882,.03]]]]},
+  {name:'Фишки',
+   seq:[[0,.06,'noise',[[3000,.3]]],[.09,.06,'noise',[[4200,.3]]],[.18,.06,'noise',[[3500,.3]]],[.3,.06,'noise',[[2600,.3]]],
+        [.38,.06,'noise',[[4000,.3]]],[.5,.35,'sine',[[1175,.22]]],[.65,.6,'sine',[[1568,.22]]]]},
+  {name:'Касса',
+   seq:[[0,.12,'triangle',[[2093,.28]]],[.14,.12,'triangle',[[2637,.28]]],[.35,1.2,'sine',[[1760,.2],[3520,.1]]]]},
+  {name:'Мягкий сигнал',
+   seq:[[0,.8,'sine',[[523,.3]]],[.45,1.1,'sine',[[659,.3]]]]},
+  {name:'Тройной бип',
+   seq:[[0,.16,'square',[[1000,.18]]],[.25,.16,'square',[[1000,.18]]],[.5,.2,'square',[[1400,.18]]]]},
+  {name:'Фанфары',
+   seq:[[0,.2,'sawtooth',[[523,.15]]],[.2,.2,'sawtooth',[[659,.15]]],[.4,.2,'sawtooth',[[784,.15]]],[.6,.9,'sawtooth',[[1047,.16],[523,.08]]]]},
+  {name:'Арфа',
+   seq:[[0,.6,'triangle',[[392,.28]]],[.09,.6,'triangle',[[494,.28]]],[.18,.6,'triangle',[[587,.28]]],[.27,.6,'triangle',[[740,.28]]],[.36,.9,'triangle',[[988,.28]]]]},
+  {name:'Сирена',
+   seq:[[0,.22,'square',[[600,.16]]],[.25,.22,'square',[[800,.16]]],[.5,.22,'square',[[600,.16]]],[.75,.22,'square',[[800,.16]]],[1,.3,'square',[[1000,.16]]]]}
+];
+function playSeq(seq, reverse){
+  let notes = seq;
+  if (reverse){
+    const idx = [];
+    seq.forEach((n, i) => { if (n[2] !== 'noise') idx.push(i); });
+    notes = seq.map(n => n.slice());
+    idx.forEach((i, k) => { const src = seq[idx[idx.length-1-k]]; notes[i][2] = src[2]; notes[i][3] = src[3]; });
+  }
+  notes.forEach(n => {
+    if (n[2] === 'noise') noiseHit(n[0], n[1], n[3][0][1], n[3][0][0]);
+    else n[3].forEach(p => beep(p[0], n[0], n[1], p[1], n[2]));
+  });
+}
 function sound(kind, force){
   if (!C.sound && !force) return;
-  if (kind==='level'){ beep(660,0,.35); beep(880,.3,.35); beep(1320,.6,.9); }
-  else if (kind==='break'){ beep(880,0,.4); beep(660,.35,.4); beep(523,.7,1.0); }
+  const snd = SOUNDS[C.levelSound] || SOUNDS[0];
+  if (kind==='level') playSeq(snd.seq, false);
+  else if (kind==='break'){ if (snd.brk) playSeq(snd.brk, false); else playSeq(snd.seq, true); }
   else if (kind==='warn'){ beep(1000,0,.18,.3,'square'); beep(1000,.3,.18,.3,'square'); }
   else if (kind==='rebuy'){ beep(700,0,.25,.35,'triangle'); beep(700,.35,.25,.35,'triangle'); beep(450,.7,1.1,.35,'triangle'); }
 }
@@ -898,7 +952,7 @@ function recalcFrom(i){
   }
   drawRows();
 }
-$('testSound').onclick = () => { audio(); sound('level', true); };
+$('testSound').onclick = () => { audio(); playSeq((SOUNDS[+$('cLevelSound').value] || SOUNDS[0]).seq, false); };
 $('cTheme').innerHTML = THEMES.map(t => '<option value="'+t.id+'">'+t.name+'</option>').join('');
 
 function openSettings(){
@@ -910,6 +964,7 @@ function openSettings(){
   $('cRebuyStack').value = C.rebuyStack; $('cRebuyCost').value = C.rebuyCost;
   $('cPlayers').value = C.players; $('cStack').value = C.startStack; $('cBuyIn').value = C.buyIn;
   $('cShowBank').checked = C.showBank;
+  $('cLevelSound').value = String(SOUNDS[C.levelSound] ? C.levelSound : 0);
   $('cTheme').value = THEMES.some(t => t.id === C.theme) ? C.theme : 'neon';
   $('cMinChip').value = C.minChip; $('cStartSb').value = C.startSb; $('cStartBb').value = C.startBb;
   $('cLevelMin').value = C.levelMin; $('cTarget').checked = C.targetOn; $('cTargetHours').value = C.targetHours;
@@ -935,6 +990,7 @@ function saveSettings(){
   C.startStack = num($('cStack').value, C.startStack);
   C.buyIn = num($('cBuyIn').value, C.buyIn);
   C.showBank = $('cShowBank').checked;
+  C.levelSound = +$('cLevelSound').value || 0;
   C.theme = $('cTheme').value;
   Object.assign(C, readCfgForm());
   W.forEach(r => { r.min = Math.max(1, r.min || 1); });
