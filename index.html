@@ -260,6 +260,8 @@ body.nobank .stats{grid-template-columns:repeat(3,1fr)}
 <script>
 'use strict';
 const STORE = 'pokerTimer.v1';
+// Программа для Windows (127.0.0.1) хранит настройки в settings.json рядом с exe через локальный сервер
+const LOCAL_API = (location.protocol === 'http:' && location.hostname === '127.0.0.1') ? '/api/settings' : null;
 /* ---------- расчёт структуры блайндов ---------- */
 const roundTo = (v, m) => Math.max(m, Math.round(v/m)*m);
 // Допустимый большой блайнд (кратен фишке m):
@@ -425,7 +427,7 @@ const defState = (players) => ({running:false, lastTs:0, elapsed:0, idx:0, level
 
 let C = defConfig(), S = defState(C.players);
 try{
-  const saved = JSON.parse(localStorage.getItem(STORE) || 'null');
+  const saved = JSON.parse(readStored() || 'null');
   if (saved && saved.C && Array.isArray(saved.C.levels) && saved.C.levels.length){
     C = Object.assign(defConfig(), saved.C);
     if (C.title === 'Покерный таймер') C.title = 'Poker Night';
@@ -434,7 +436,19 @@ try{
     if (S.idx >= C.levels.length) { S.idx = C.levels.length-1; S.levelElapsed = 0; }
   }
 }catch(e){}
-function save(){ try{ localStorage.setItem(STORE, JSON.stringify({C,S})); }catch(e){} }
+// Программа для Windows (127.0.0.1) хранит настройки в settings.json рядом с exe через локальный сервер;
+// в обычном браузере и на GitHub Pages — только localStorage.
+function readStored(){
+  if (LOCAL_API){
+    try{ const x = new XMLHttpRequest(); x.open('GET', LOCAL_API, false); x.send(); if (x.status === 200 && x.responseText.trim()) return x.responseText; }catch(e){}
+  }
+  try{ return localStorage.getItem(STORE); }catch(e){ return null; }
+}
+function writeStored(s){
+  if (LOCAL_API){ try{ const x = new XMLHttpRequest(); x.open('PUT', LOCAL_API, true); x.setRequestHeader('Content-Type','application/json'); x.send(s); }catch(e){} }
+  try{ localStorage.setItem(STORE, s); }catch(e){}
+}
+function save(){ writeStored(JSON.stringify({C,S})); }
 
 /* ---------- утилиты ---------- */
 const $ = id => document.getElementById(id);

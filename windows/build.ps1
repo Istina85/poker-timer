@@ -1,6 +1,6 @@
 ﻿# Сборка Poker Night для Windows.
 # Запуск (из любой папки):  powershell -ExecutionPolicy Bypass -File windows\build.ps1
-# Результат: dist\Poker Night\  (Poker Night.exe + index.html + Read_me.txt) и dist\Poker-Night-Windows.zip
+# Результат: dist\Poker Night\  (Poker Night.exe + index.html + Read_me.txt; settings.json создаёт сама программа) и dist\Poker-Night-Windows.zip
 # Нужны только компоненты Windows: .NET Framework 4 (csc.exe), System.Drawing. Установка ничего не требует.
 
 $ErrorActionPreference = 'Stop'
@@ -37,10 +37,11 @@ $bw.Write([uint32]$png.Length); $bw.Write([uint32]22)                    # ра�
 $bw.Write($png); $bw.Flush(); $bw.Close(); $fs.Close()
 
 # 2. Сборка exe
-if (Test-Path $out) { Remove-Item $out -Recurse -Force }
+# Чистим только файлы сборки; settings.json и прочее не трогаем
 New-Item -ItemType Directory -Path $out -Force | Out-Null
+foreach ($f in @('Poker Night.exe','index.html','Read_me.txt')) { $p = Join-Path $out $f; if (Test-Path $p) { Remove-Item $p -Force } }
 & $csc /nologo /target:winexe /optimize+ /win32icon:$ico `
-    /r:System.Windows.Forms.dll /r:System.dll `
+    /r:System.Windows.Forms.dll /r:System.dll /r:System.Management.dll `
     /out:"$out\Poker Night.exe" "$src\PokerNight.cs"
 if ($LASTEXITCODE -ne 0) { throw "csc завершился с кодом $LASTEXITCODE" }
 
@@ -51,8 +52,10 @@ Copy-Item (Join-Path $src 'Read_me.txt') $out -ErrorAction SilentlyContinue
 # 4. Архив для выкладки в GitHub Releases
 $zip = Join-Path $dist 'Poker-Night-Windows.zip'
 if (Test-Path $zip) { Remove-Item $zip -Force }
-Compress-Archive -Path $out -DestinationPath $zip
+$pack = @("$out\Poker Night.exe", "$out\index.html", "$out\Read_me.txt") | ForEach-Object { Get-Item $_ }
+Compress-Archive -Path $pack -DestinationPath $zip
 
 $exe = Get-Item "$out\Poker Night.exe"
 Write-Host ("exe: {0} ({1:N0} байт)" -f $exe.FullName, $exe.Length)
+if (Test-Path (Join-Path $out 'data')) { Write-Host 'Внимание: в папке остался старый каталог data (профиль прежней версии). Его можно удалить вручную.' }
 Write-Host ("zip: {0} ({1:N0} байт)" -f $zip, (Get-Item $zip).Length)
